@@ -47,6 +47,8 @@
       "settings": {
         "clients": [
           {
+            "id": "test",
+            "email": "test"
           }
         ],
         "decryption": "none"
