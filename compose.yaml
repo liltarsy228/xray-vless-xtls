@@ -1,6 +1,28 @@
 services:
-  xrayvlessxtls:
-    image: xrayvlessxtls
+  xray-core:
+    container_name: xray-core
+    restart: on-failure
     build:
+      args:
+        TARGET_SERVER: "marx.guide"
+        TARGET_PORT: "443"
       context: .
       dockerfile: ./Dockerfile
+
+    network_mode: host
+
+    volumes:
+    - type: volume
+      source: xray-core-settings
+      target: /usr/local/etc/xray
+
+    - type: volume
+      source: containers-logs
+      target: /var/log/xray
+      
+
+
+
+volumes:
+  xray-core-settings:
+  containers-logs:
