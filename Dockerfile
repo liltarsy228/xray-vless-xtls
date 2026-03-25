@@ -2,6 +2,9 @@
 # depends like as platform: arm/amd
 FROM --platform=$BUILDPLATFORM golang:latest AS build
 
+WORKDIR /src
+COPY ./Xray-core/ .
+
 ARG TARGETOS
 ARG TARGETARCH
 RUN GOOS=$TARGETOS GOARCH=$TARGETARCH CGO_ENABLED=0 go build -o xray -trimpath -buildvcs=false -gcflags="all=-l=4" -ldflags "-s -w -buildid=" ./main
@@ -12,7 +15,8 @@ ADD https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/geosi
 # for correct copy from build to run
 RUN mkdir /tmp/empty
 
-RUN cat <<EOF >/tmp/usr/local/etc/xray/00_log.json
+RUN mkdir -p /tmp/usr/local/etc/xray \
+ && cat <<EOF >/tmp/usr/local/etc/xray/00_log.json
 {
   "log": {
     "error": "/var/log/xray/error.log",
@@ -22,6 +26,8 @@ RUN cat <<EOF >/tmp/usr/local/etc/xray/00_log.json
   }
 }
 EOF
+
+
 
 # create empty configs for template
 RUN echo '{}' >/tmp/usr/local/etc/xray/01_api.json
@@ -43,6 +49,8 @@ RUN mkdir -p /tmp/var/log/xray && touch \
 #Build runtime image
 FROM alpine:latest
 LABEL Name=xray Version=0.0.1
+
+RUN apk update && apk add jq 
 
 ARG NEWUSER=xray
 RUN addgroup -g 299 "${NEWUSER}" && \
