@@ -50,7 +50,7 @@ RUN mkdir -p /tmp/var/log/xray && touch \
 FROM alpine:latest
 LABEL Name=xray Version=0.0.1
 
-RUN apk update && apk add jq 
+RUN apk update && apk add  --no-cache jq 
 
 ARG NEWUSER=xray
 RUN addgroup -g 299 "${NEWUSER}" && \
@@ -85,22 +85,6 @@ RUN \
     echo "$KEYS" >> "${XRAY_DIR}"/pki/server/server.keys
 
 
-# RUN \
-#     PRIVATE_KEY=$(grep "PrivateKey:" "${XRAY_DIR}/pki/server/server.keys" | awk '{print $2}' | head -1) && \
-#     PUB_KEY=$(grep "Password:" "${XRAY_DIR}/pki/server/server.keys" | awk '{print $2}' | head -1) && \
-#     jq \
-#         --arg priv "$PRIVATE_KEY" \
-#         --arg target "${TARGET_SERVER}:${TARGET_PORT}" \
-#         --arg server "${TARGET_SERVER}" \
-#         '
-#         .inbounds[1].streamSettings.realitySettings.privateKey = $priv |
-#         .inbounds[1].streamSettings.realitySettings.target = $target |
-#         .inbounds[1].streamSettings.realitySettings.serverNames[0] = $server
-#         ' \
-#         "${XRAY_DIR}/config.json" > "${XRAY_DIR}/config.new.json" && \
-#     mv "${XRAY_DIR}/config.json" "${XRAY_DIR}/config.json.bak" && \
-#     mv "${XRAY_DIR}/config.new.json" "${XRAY_DIR}/config.json"
-
 RUN PRIVATE_KEY=$(grep "PrivateKey:" "${XRAY_DIR}/pki/server/server.keys" | awk '{print $2}' | head -1) && \
     PUB_KEY=$(grep "Password:" "${XRAY_DIR}/pki/server/server.keys" | awk '{print $2}' | head -1) && \
     jq --arg priv "$PRIVATE_KEY" \
@@ -124,6 +108,6 @@ ARG TZ=Etc/UTC
 ENV TZ=$TZ
 
 USER "${NEWUSER}"
-
+EXPOSE 443 54321
 ENTRYPOINT ["/usr/local/bin/xray"]
 CMD ["-config", "/usr/local/etc/xray/config.json"]
