@@ -1,0 +1,6 @@
+services:
+  xrayvlessxtls:
+    image: xrayvlessxtls
+    build:
+      context: .
+      dockerfile: ./Dockerfile
