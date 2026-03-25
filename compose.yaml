@@ -7,7 +7,7 @@ services:
         TARGET_SERVER: "marx.guide"
         TARGET_PORT: "443"
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./xray-core-Dockerfile
 
     network_mode: host
 
