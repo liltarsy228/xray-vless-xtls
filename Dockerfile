@@ -77,22 +77,31 @@ RUN \
     echo "$KEYS" >> "${XRAY_DIR}"/pki/server/server.keys
 
 
-RUN \
-    PRIVATE_KEY=$(grep "PrivateKey:" "${XRAY_DIR}/pki/server/server.keys" | awk '{print $2}' | head -1) && \
+# RUN \
+#     PRIVATE_KEY=$(grep "PrivateKey:" "${XRAY_DIR}/pki/server/server.keys" | awk '{print $2}' | head -1) && \
+#     PUB_KEY=$(grep "Password:" "${XRAY_DIR}/pki/server/server.keys" | awk '{print $2}' | head -1) && \
+#     jq \
+#         --arg priv "$PRIVATE_KEY" \
+#         --arg target "${TARGET_SERVER}:${TARGET_PORT}" \
+#         --arg server "${TARGET_SERVER}" \
+#         '
+#         .inbounds[1].streamSettings.realitySettings.privateKey = $priv |
+#         .inbounds[1].streamSettings.realitySettings.target = $target |
+#         .inbounds[1].streamSettings.realitySettings.serverNames[0] = $server
+#         ' \
+#         "${XRAY_DIR}/config.json" > "${XRAY_DIR}/config.new.json" && \
+#     mv "${XRAY_DIR}/config.json" "${XRAY_DIR}/config.json.bak" && \
+#     mv "${XRAY_DIR}/config.new.json" "${XRAY_DIR}/config.json"
+
+RUN PRIVATE_KEY=$(grep "PrivateKey:" "${XRAY_DIR}/pki/server/server.keys" | awk '{print $2}' | head -1) && \
     PUB_KEY=$(grep "Password:" "${XRAY_DIR}/pki/server/server.keys" | awk '{print $2}' | head -1) && \
-    jq \
-        --arg priv "$PRIVATE_KEY" \
-        --arg target "${TARGET_SERVER}:${TARGET_PORT}" \
-        --arg server "${TARGET_SERVER}" \
-        '
-        .inbounds[1].streamSettings.realitySettings.privateKey = $priv |
-        .inbounds[1].streamSettings.realitySettings.target = $target |
-        .inbounds[1].streamSettings.realitySettings.serverNames[0] = $server
-        ' \
-        "${XRAY_DIR}/config.json" > "${XRAY_DIR}/config.new.json" && \
+    jq --arg priv "$PRIVATE_KEY" \
+       --arg target "${TARGET_SERVER}:${TARGET_PORT}" \
+       --arg server "${TARGET_SERVER}" \
+       '.inbounds[1].streamSettings.realitySettings.privateKey = $priv | .inbounds[1].streamSettings.realitySettings.target = $target | .inbounds[1].streamSettings.realitySettings.serverNames[0] = $server' \
+       "${XRAY_DIR}/config.json" > "${XRAY_DIR}/config.new.json" && \
     mv "${XRAY_DIR}/config.json" "${XRAY_DIR}/config.json.bak" && \
     mv "${XRAY_DIR}/config.new.json" "${XRAY_DIR}/config.json"
-
 
    
 
