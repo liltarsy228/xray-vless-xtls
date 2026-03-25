@@ -20,8 +20,16 @@ services:
       source: containers-logs
       target: /var/log/xray
       
-
-
+  v2ray-exporter:
+    container_name: v2ray-exporter
+    restart: on-failure
+    image: wi1dcard/v2ray-exporter:master
+    command:
+      - --v2ray-endpoint=127.0.0.1:54321   
+      - --listen=:9550
+    network_mode: host
+    depends_on:
+      - xray-core
 
 volumes:
   xray-core-settings:
