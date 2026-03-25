@@ -1,0 +1,100 @@
+{
+  "log": {
+    "loglevel": "debug",
+    "access": "/var/log/xray/access.log",
+    "error": "/var/log/xray/error.log"
+  },
+
+  "stats": {},
+  "api": {
+       "tag": "api",
+       "services": [
+           "StatsService"
+       ]  
+  },
+  "policy": {
+      "levels": {
+      	"0": {
+	  "statsUserUplink": true,
+	  "statsUserDownlink": true,
+	  "statsUserOnline": true
+	}
+      },
+
+      "system": {
+	   "statsInboundUplink": true,
+	   "statsInboundDownlink": true,
+           "statsOutboundUplink": true,
+           "statsOutboundDownlink": true
+      }
+  },
+
+  "inbounds": [
+    {
+      "tag": "api-in",
+      "listen": "127.0.0.1",
+      "port": 54321,
+      "protocol": "dokodemo-door",
+      "settings": {
+        "address": "127.0.0.1"
+      }
+    },
+
+    {
+      "listen": "0.0.0.0",
+      "port": 443,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+          }
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "raw",
+        "security": "reality",
+        "realitySettings": {
+          "target": "server-name:port",
+          "serverNames": [
+            "server-name"
+          ],
+          "privateKey": "private-key",
+          "shortIds": [
+		        ""
+          ]
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      }
+    }
+  ],
+
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "tag": "direct"
+    },
+    {
+      "protocol": "blackhole",
+      "tag": "block"
+    }
+  ],
+
+  "routing": {
+    "rules": [
+	{
+	    "inboundTag": [
+	        "api-in"
+	    ],
+	    "outboundTag": "api",
+	    "type": "field"
+	}
+    ]
+  }
+}
