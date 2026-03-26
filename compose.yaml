@@ -8,8 +8,10 @@ services:
         TARGET_PORT: "443"
       context: .
       dockerfile: ./xray-core-Dockerfile
+    ports:
+      - 443:8443
+      - 54321:54321
 
-    network_mode: host
 
     volumes:
     - type: volume
@@ -25,9 +27,11 @@ services:
     restart: on-failure
     image: wi1dcard/v2ray-exporter:master
     command:
-      - --v2ray-endpoint=127.0.0.1:54321   
+      - --v2ray-endpoint=xray-core:54321   
       - --listen=:9550
-    network_mode: host
+    #network_mode: host
+    ports:
+      - 9550:9550
     depends_on:
       - xray-core
 

@@ -108,6 +108,6 @@ ARG TZ=Etc/UTC
 ENV TZ=$TZ
 
 USER "${NEWUSER}"
-EXPOSE 443 54321
+EXPOSE 8443 54321
 ENTRYPOINT ["/usr/local/bin/xray"]
 CMD ["-config", "/usr/local/etc/xray/config.json"]
