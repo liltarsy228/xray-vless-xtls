@@ -79,7 +79,7 @@ RUN mkdir -p "${XRAY_DIR}"/pki/clients
 
 
 COPY config.json "${XRAY_DIR}"
-
+COPY new-xray-client /usr/local/bin/
 
 RUN \
     KEYS=$(/usr/local/bin/xray x25519) && \
