@@ -1,6 +1,6 @@
 
 # depends like as platform: arm/amd
-FROM --platform=$BUILDPLATFORM golang:latest AS build
+FROM golang:latest AS build
 
 WORKDIR /src
 COPY ./Xray-core/ .
@@ -15,17 +15,19 @@ ADD https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/geosi
 # for correct copy from build to run
 RUN mkdir /tmp/empty
 
-RUN mkdir -p /tmp/usr/local/etc/xray \
- && cat <<EOF >/tmp/usr/local/etc/xray/00_log.json
-{
-  "log": {
-    "error": "/var/log/xray/error.log",
-    "loglevel": "warning",
-    "access": "none",
-    "dnsLog": false
-  }
-}
-EOF
+RUN mkdir -p /tmp/usr/local/etc/xray && \
+printf '{\n  "log": {\n    "error": "/var/log/xray/error.log",\n    "loglevel": "warning",\n    "access": "none",\n    "dnsLog": false\n  }\n}\n' \
+> /tmp/usr/local/etc/xray/00_log.json
+
+#{
+#  "log": {
+#    "error": "/var/log/xray/error.log",
+#    "loglevel": "warning",
+#    "access": "none",
+#    "dnsLog": false
+#  }
+#}
+
 
 
 
@@ -50,7 +52,7 @@ RUN mkdir -p /tmp/var/log/xray && touch \
 FROM alpine:latest
 LABEL Name=xray Version=0.0.1
 
-RUN apk update && apk add  --no-cache jq 
+RUN apk update && apk add  --no-cache jq  openssl
 
 ARG NEWUSER=xray
 RUN addgroup -g 299 "${NEWUSER}" && \

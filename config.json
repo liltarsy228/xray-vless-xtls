@@ -48,13 +48,14 @@
         "clients": [
           {
             "id": "test",
-            "email": "test"
-          }
+            "email": "test",
+            "flow": "xtls-rprx-vision"
+	  }
         ],
         "decryption": "none"
       },
       "streamSettings": {
-        "network": "raw",
+        "network": "tcp",
         "security": "reality",
         "realitySettings": {
           "target": "server-name:port",
