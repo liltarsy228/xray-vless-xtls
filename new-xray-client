@@ -1,0 +1,93 @@
+#!/bin/sh
+set -e
+
+#Цвета
+RED="\033[31m"
+GREEN="\033[32m"
+YELLOW="\033[33m"
+BLUE="\033[34m"
+MAGENTA="\033[35m"
+CYAN="\033[36m"
+RESET="\033[0m"
+
+# Функция помощи
+usage() {
+    echo "Использование: $0 [опции]"
+    echo ""
+    echo "Опции:"
+    echo "  -n, --name       Имя клиента (обязательно)"
+    echo "  -e, --email      Email клиента (по умолчанию имя клиента)"
+    echo "  -o, --output     Путь к файлу для сохранения конфигурации"
+    echo "  -s, --server     IP прокси сервера (обязательно)"
+    echo "  -h, --help       Показать это сообщение"
+    echo " "
+    exit 1
+}
+
+# Парсинг аргументов
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -n|--name)
+            CLIENT_NAME="$2"
+            shift 2
+            ;;
+        -e|--email)
+            CLIENT_EMAIL="$2"
+            shift 2
+            ;;
+        -s|--server)
+            SERVER_IP="$2"
+            shift 2
+            ;;
+        -o|--output)
+            CONF_FILE="$2"
+            shift 2
+            ;;
+        -h|--help)
+            usage
+            ;;
+        *)
+            echo "Неизвестная опция: $1"
+            usage
+            ;;
+    esac
+done      
+
+SERVER_KEYS_PATH=/usr/local/etc/xray/pki/server/server.keys
+SERVER_CONFIG_PATH=/usr/local/etc/xray
+
+PUB_SERV_KEY=$(grep Password $SERVER_KEYS_PATH | awk '{print $3}')
+SNI=$(jq -r '.inbounds[1].streamSettings.realitySettings.serverNames[0]' $SERVER_CONFIG_PATH/config.json)
+
+
+# Проверка обязательных аргументов
+[ -z "$CLIENT_NAME" ] && { echo "Ошибка: не указано имя клиента"; usage; }
+
+[ -z "$SERVER_IP" ] && { echo "Ошибка: сервер не указан"; usage; }
+
+CLIENT_EMAIL=${CLIENT_EMAIL:-$CLIENT_NAME@example.com}
+CONF_FILE=${CONF_FILE:-"$SERVER_CONFIG_PATH/pki/clients/${CLIENT_NAME}.conf"}
+
+# Генерация UUID
+UUID=$(/usr/local/bin/xray uuid)
+
+# Генерация ShortID
+SHORTID=$(openssl rand -hex 8)
+
+# Создание конфигурационного файла
+cat > "$CONF_FILE" <<EOF
+# Клиент Xray
+name: $CLIENT_NAME
+email: $CLIENT_EMAIL
+uuid: $UUID
+shortId: $SHORTID
+pubServerKey: $PUB_SERV_KEY
+EOF
+
+link="vless://$UUID@$SERVER_IP:443?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$SNI&pbk=$PUB_SERV_KEY&sid=$SHORTID&type=tcp&fp=chrome"
+echo -e "Ссылка для подключения: \n $link"
+echo ""
+echo "Конфигурация клиента: $CONF_FILE успешно создана."
+echo ""
+echo "Для включения пользователя добавьте в $SERVER_CONFIG_PATH/config.json UUID и shortID клиента!"
+
