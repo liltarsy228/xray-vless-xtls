@@ -10,7 +10,7 @@ services:
       dockerfile: ./xray-core-Dockerfile
     ports:
       - 443:8443
-      - 54321:54321
+      - "127.0.0.1:54321:54321"
 
 
     volumes:
@@ -31,7 +31,7 @@ services:
       - --listen=:9550
     #network_mode: host
     ports:
-      - 9550:9550
+      - "127.0.0.1:9550:9550"
     depends_on:
       - xray-core
 
