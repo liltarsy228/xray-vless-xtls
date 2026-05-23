@@ -1,10 +1,10 @@
 services:
   xray-core:
     container_name: xray-core
-    restart: on-failure
+    restart: always
     build:
       args:
-        TARGET_SERVER: "marx.guide"
+        TARGET_SERVER: "topicgowild.mine.bz"
         TARGET_PORT: "443"
       context: .
       dockerfile: ./xray-core-Dockerfile
@@ -24,7 +24,7 @@ services:
       
   v2ray-exporter:
     container_name: v2ray-exporter
-    restart: on-failure
+    restart: always
     image: wi1dcard/v2ray-exporter:master
     command:
       - --v2ray-endpoint=xray-core:54321   
