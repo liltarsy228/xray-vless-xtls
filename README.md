@@ -131,7 +131,9 @@ new-xray-client -n user1 -e user1@example.com -s 228.228.228.228
 ```
 "clients": [
   {
-    "id": "11111111-2222-3333-4444-555555555555"
+    "id": "11111111-2222-3333-4444-555555555555",
+    "email": "email@domain",
+    "flow": "xtls-rprx-vision"
   }
 ]
 ```
