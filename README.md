@@ -1,4 +1,4 @@
-## 🚀 Xray VLESS + XTLS + Reality в Docker
+# 🚀 Xray VLESS + XTLS + Reality в Docker
 
 Готовое решение для развертывания Xray VLESS + XTLS + Reality в Docker с возможностью управления клиентами и экспорта метрик для мониторинга.
 
@@ -36,7 +36,7 @@ http://127.0.0.1:9550/metrics
 📊 Grafana
 
 
-# 📋 Требования
+## 📋 Требования
 
 Установите необходимые пакеты:
 
@@ -60,7 +60,7 @@ cd xray-vless-xtls
 
 git clone https://github.com/XTLS/Xray-core.git
 
-⚙️ Настройка
+### ⚙️ Настройка
 
 Перед запуском откройте файл:
 
@@ -74,7 +74,7 @@ TARGET_SERVER:
 
 🌍 доменное имя сервера, под который будем маскироваться прокси;
 
-🚀 Запуск
+### 🚀 Запуск
 
 Для сборки используется Docker BuildKit.
 
@@ -93,7 +93,7 @@ xxxxxxxxxxxx   xray-core         Up
 xxxxxxxxxxxx   v2ray-exporter    Up
 
 
-👤 Создание клиента
+## 👤 Создание клиента
 
 Подключитесь к контейнеру:
 
