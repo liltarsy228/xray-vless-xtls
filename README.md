@@ -105,7 +105,7 @@ new-xray-client -n NAME -e email@domain -s server-ip
 ```
 Пример:
 ```
-new-xray-client -n user1 -e user1@example.com -s vpn.example.com
+new-xray-client -n user1 -e user1@example.com -s 228.228.228.228
 ```
 После выполнения команды будут выведены:
 ```
