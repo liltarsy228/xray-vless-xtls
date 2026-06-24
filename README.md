@@ -40,14 +40,15 @@ http://127.0.0.1:9550/metrics
 
 Установите необходимые пакеты:
 
-```apt update
+```
+apt update
 apt install -y docker.io docker-compose docker-buildx
-
+```
 Проверьте версии Docker:
-
+```
 docker version
 docker compose version
-
+```
 ## 🚀 Развертывание
 
 ### 📥 Получение исходного кода
