@@ -48,9 +48,9 @@ apt install -y docker.io docker-compose docker-buildx
 docker version
 docker compose version
 
-# 🚀 Развертывание
+## 🚀 Развертывание
 
-📥 Получение исходного кода
+### 📥 Получение исходного кода
 
 Клонируйте репозиторий и исходный код Xray:
 
