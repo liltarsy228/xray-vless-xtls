@@ -170,17 +170,29 @@ new-xray-client
 Поддерживаемые клиенты:
 
 Android
+
 📱 v2rayNG
+
 📱 Hiddify
+
 📱 Happ
+
 iOS
+
 🍏 V2RAY
+
 🍏 V2BOX
+
 🍏 Happ
+
 Windows
+
 🖥️ V2BOX
+
 🖥️ Nekoray
+
 Linux
+
 🐧 Nekoray
 
 После импорта ссылки подключение будет готово к использованию.
