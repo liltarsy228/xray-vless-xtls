@@ -1,0 +1,12 @@
+[Unit]
+Description=Create ipset lists
+Before=netfilter-persistent.service
+Before=iptables.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/ipset-init.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
