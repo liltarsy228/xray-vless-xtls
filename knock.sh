@@ -1,6 +1,5 @@
 #Install package for iptables
-apt install iptables-persistent
-apt-get install -y ipset
+apt-get install -y ipset  iptables-persistent
 
 #Create ip lists
 ipset create knock1 hash:ip timeout 2
