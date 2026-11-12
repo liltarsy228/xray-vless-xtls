@@ -58,7 +58,7 @@ echo "Starting server configuration..."
 # 1. СОЗДАНИЕ ПОЛЬЗОВАТЕЛЯ И НАСТРОЙКА SUDO
 # ============================================================
 
-echo "[1/4] Creating user..."
+echo "[1/5] Creating user..."
 
 # Проверяем наличие пользователя в системе
 if id "$USERNAME" &>/dev/null; then
@@ -90,7 +90,7 @@ echo "User $USERNAME configured."
 # 2. НАСТРОЙКА SSH
 # ============================================================
 
-echo "[2/4] Configuring SSH..."
+echo "[2/5] Configuring SSH..."
 
 # Указываем путь к основному конфигурационному файлу SSH
 SSHD_CONFIG="/etc/ssh/sshd_config"
@@ -180,7 +180,7 @@ echo "SSH configured on port $SSH_PORT."
 # 3. УСТАНОВКА GIT
 # ============================================================
 
-echo "[3/4] Checking Git installation..."
+echo "[3/5] Checking Git installation..."
 
 # Проверяем наличие исполняемого файла Git
 if ! command -v git &>/dev/null; then
@@ -212,10 +212,10 @@ else
 fi
 
 # ============================================================
-# 4. ЗАГРУЗКА РЕПОЗИТОРИЯ И ЗАПУСК KNOCK.SH
+# 4. ЗАГРУЗКА РЕПОЗИТОРИЯ И ЗАПУСК KNOCK.SH для 1 инициализации правил фаервола
 # ============================================================
 
-echo "[4/4] Cloning repository..."
+echo "[4/5] Cloning repository..."
 
 # Получаем название репозитория из URL
 REPO_NAME=$(basename "${REPO_URL%/}")
@@ -255,6 +255,53 @@ chmod +x ./knock.sh
 # Запускаем knock.sh от имени root
 echo "Executing knock.sh..."
 ./knock.sh
+
+# ============================================================
+# 5. НАСТРОЙКА IPSET SERVICE для постоянных правил фаервола
+# ============================================================
+
+echo "[5/5] Configuring ipset service..."
+
+# Проверяем наличие утилиты ipset
+if ! command -v ipset &>/dev/null; then
+
+    # Устанавливаем ipset в Debian, Ubuntu и Astra Linux
+    if command -v apt-get &>/dev/null; then
+        apt-get update
+        apt-get install -y ipset
+
+    # Устанавливаем ipset в RedOS, RHEL и Fedora
+    elif command -v dnf &>/dev/null; then
+        dnf install -y ipset
+
+    elif command -v yum &>/dev/null; then
+        yum install -y ipset
+
+    else
+        echo "ERROR: Cannot install ipset."
+        exit 1
+    fi
+fi
+
+# Перемещаем systemd unit в каталог служб
+mv "$REPO_DIR/ipset.service" /etc/systemd/system/ipset.service
+
+# Перемещаем скрипт инициализации в /usr/local/bin
+mv "$REPO_DIR/ipset-init.sh" /usr/local/bin/ipset-init.sh
+
+# Делаем скрипт инициализации исполняемым
+chmod 755 /usr/local/bin/ipset-init.sh
+
+# Перечитываем конфигурации systemd
+systemctl daemon-reload
+
+# Добавляем службу в автозагрузку и запускаем её
+systemctl enable --now ipset.service
+
+# Проверяем состояние службы
+systemctl status ipset.service --no-pager
+
+echo "ipset service configured successfully."
 
 # ============================================================
 # ЗАВЕРШЕНИЕ
